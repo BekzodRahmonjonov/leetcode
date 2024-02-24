@@ -1,12 +1,18 @@
 var cancellable = function(fn, args, t) {
-  let timeout
-  const cancelFn = () => {
-      clearTimeout(timeout)
-  }
+    let result = []
 
-  timeout = setTimeout(() => {
-      fn(...args)
-  }, t)
+    result.push({ "time": 0, "returned": fn(...args) })
 
-  return cancelFn
+    let interval = setInterval(() => {
+        result.push({
+            time: Date.now(),
+            returned: fn(...args)
+        })
+    }, t)
+    
+    function intervalFn() {
+        clearInterval(interval)
+        return result
+    }
+    return intervalFn
 };
